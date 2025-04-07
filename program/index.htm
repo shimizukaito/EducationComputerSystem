@@ -25,42 +25,6 @@
             cursor: pointer;
             font-size: 24px;
         }
-        /* モーダル背景 */
-        #modalBackground {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        /* モーダルウィンドウ */
-        #settingsModal {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            width: 300px;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        /* 閉じるボタン */
-        #closeModal {
-            position: absolute;
-            right: 10px;
-            bottom: 10px;
-            padding: 5px 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        #closeModal:hover {
-            background-color: #0056b3;
-        }
         #editorContainer {
             display: flex;
             width: 80%;
@@ -86,6 +50,7 @@
             white-space: pre;
             overflow: auto;
             outline: none;
+            tab-size: 4;
         }
         #consoleOutput {
             width: 80%;
@@ -115,30 +80,6 @@
         <div id="settingsIcon">⚙️</div>
     </header>
 
-    <!-- 設定モーダル -->
-    <div id="modalBackground">
-        <div id="settingsModal">
-            <h3>設定</h3>
-            <label for="fontSize">文字サイズ:</label>
-            <select id="fontSize">
-                <option value="12">12px</option>
-                <option value="14" selected>14px</option>
-                <option value="16">16px</option>
-                <option value="18">18px</option>
-                <option value="20">20px</option>
-                <option value="24">24px</option>
-            </select>
-            
-            <br>
-            <label for="fontSize">設定2；</label>
-            
-            <br>
-            <label for="fontSize">設定3:</label>
-            
-            <button id="closeModal">閉じる</button>
-        </div>
-    </div>
-
     <div id="editorContainer">
         <div id="lineNumbers">1</div>
         <textarea id="codeEditor" placeholder="ここにPythonコードを入力"></textarea>
@@ -164,29 +105,51 @@
             code = document['codeEditor'].value
             console_output.text = ""
             lines = code.split('\n')
+
             for line_number, line in enumerate(lines, start=1):
+                # 空行はスキップ
+                if line.strip() == "":
+                    continue
                 try:
                     exec(line)
                 except Exception as e:
+                    try:
+                        # エラー発生時に正確な行番号を表示
+                        error_line = e.__traceback__.tb_lineno
+                    except AttributeError:
+                        error_line = line_number
                     error_message = f"エラー：{str(e)} (行: {line_number})"
                     print(error_message, error=True)
-                    break
 
         run_button = document['runButton']
         run_button.bind('click', run_python_code)
 
-        def toggle_modal(event):
-            modal = document['modalBackground']
-            modal.style.display = "flex" if modal.style.display == "none" else "none"
+        # 行番号を更新する関数
+        def update_line_numbers(event):
+            editor = document['codeEditor']
+            lines = editor.value.split('\n')
+            line_count = len(lines)
+            line_numbers = '\n'.join(str(i + 1) for i in range(line_count))
+            document['lineNumbers'].text = line_numbers
 
-        def change_font_size(event):
-            size = document['fontSize'].value + "px"
-            document['codeEditor'].style.fontSize = size
-            document['consoleOutput'].style.fontSize = size
+        # Tabキーでタブ文字を挿入
+        def handle_tab(event):
+            if event.key == "Tab":
+                event.preventDefault()
+                editor = document['codeEditor']
+                start = editor.selectionStart
+                end = editor.selectionEnd
+                indent = "\t"
+                value = editor.value
+                editor.value = value[:start] + indent + value[end:]
+                editor.selectionStart = editor.selectionEnd = start + len(indent)
+                update_line_numbers(event)
 
-        document['settingsIcon'].bind('click', toggle_modal)
-        document['closeModal'].bind('click', toggle_modal)
-        document['fontSize'].bind('change', change_font_size)
+        # 入力とスクロールおよびTabキー押下で行番号を更新
+        code_editor = document['codeEditor']
+        code_editor.bind('input', update_line_numbers)
+        code_editor.bind('scroll', update_line_numbers)
+        code_editor.bind('keydown', handle_tab)
     </script>
 </body>
 </html>
