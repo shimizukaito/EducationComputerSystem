@@ -3,85 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>プログラミング環境テスト (Python対応)</title>
+    <!-- Brythonを読み込み -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.9.5/brython.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 80%;
-            margin: 10px;
-        }
-        #settingsIcon {
-            cursor: pointer;
-            font-size: 24px;
-        }
-        #editorContainer {
-            display: flex;
-            width: 80%;
-            margin: 10px;
-        }
-        #lineNumbers {
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f4f4f4;
-            color: #555;
-            text-align: right;
-            font-family: monospace;
-            font-size: 16px;
-            line-height: 1.2; /* 行間を調整して高さを統一 */
-            white-space: pre;
-            user-select: none;
-            overflow: hidden;
-            height: 300px;
-            box-sizing: border-box;
-        }
-        #codeEditor {
-            flex: 1;
-            height: 300px;
-            padding: 10px;
-            margin: 0;
-            border: 1px solid #ccc;
-            font-family: monospace;
-            font-size: 16px;
-            line-height: 1.2; /* 行間を統一 */
-            white-space: pre;
-            overflow: auto;
-            outline: none;
-            tab-size: 4;
-        }
-        #consoleOutput {
-            width: 80%;
-            height: 200px;
-            margin: 10px;
-            padding: 10px;
-            border: 1px solid #333;
-            background-color: #000;
-            color: #0f0;
-            font-family: monospace;
-            font-size: 16px;
-            line-height: 1.2;
-            white-space: pre-wrap;
-            overflow: auto;
-        }
-        #runButton {
-            margin: 10px;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-        .error {
-            color: #f00;
-        }
-    </style>
+    <!-- 外部CSSを読み込み -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body onload="brython()">
     <header>
@@ -96,73 +21,7 @@
     <button id="runButton">実行</button>
     <pre id="consoleOutput">実行結果がここに表示されます</pre>
 
-    <script type="text/python">
-        from browser import document
-
-        console_output = document['consoleOutput']
-
-        def custom_print(*args, sep=' ', end='\n', error=False):
-            output = sep.join(map(str, args)) + end
-            if error:
-                console_output.innerHTML += f'<span class="error">{output}</span>'
-            else:
-                console_output.text += output
-
-        print = custom_print
-
-        def run_python_code(event):
-            code = document['codeEditor'].value
-            console_output.text = ""
-            lines = code.split('\n')
-
-            for line_number, line in enumerate(lines, start=1):
-                if line.strip() == "":
-                    continue
-                try:
-                    exec(line)
-                except Exception as e:
-                    try:
-                        error_line = e.__traceback__.tb_lineno
-                    except AttributeError:
-                        error_line = line_number
-                    error_message = f"エラー：{str(e)} (行: {line_number})"
-                    print(error_message, error=True)
-
-        run_button = document['runButton']
-        run_button.bind('click', run_python_code)
-
-        # 行番号を更新する関数
-        def update_line_numbers(event):
-            editor = document['codeEditor']
-            lines = editor.value.split('\n')
-            line_count = len(lines)
-            line_numbers = '\n'.join(str(i + 1) for i in range(line_count))
-            document['lineNumbers'].text = line_numbers
-
-        # エディタのスクロールに合わせて行番号もスクロール
-        def sync_scroll(event):
-            line_numbers = document['lineNumbers']
-            code_editor = document['codeEditor']
-            line_numbers.scrollTop = code_editor.scrollTop
-
-        # Tabキーでタブ文字を挿入
-        def handle_tab(event):
-            if event.key == "Tab":
-                event.preventDefault()
-                editor = document['codeEditor']
-                start = editor.selectionStart
-                end = editor.selectionEnd
-                indent = "\t"
-                value = editor.value
-                editor.value = value[:start] + indent + value[end:]
-                editor.selectionStart = editor.selectionEnd = start + len(indent)
-                update_line_numbers(event)
-
-        # 入力とスクロールおよびTabキー押下で行番号を更新
-        code_editor = document['codeEditor']
-        code_editor.bind('input', update_line_numbers)
-        code_editor.bind('scroll', sync_scroll)
-        code_editor.bind('keydown', handle_tab)
-    </script>
+    <!-- Brython用の外部Pythonスクリプトを読み込み -->
+    <script type="text/python" src="script.js"></script>
 </body>
 </html>
