@@ -1,62 +1,53 @@
-from browser import document
+document.addEventListener("DOMContentLoaded", function () {
+    const consoleOutput = document.getElementById("consoleOutput");
+    const codeEditor = document.getElementById("codeEditor");
+    const runButton = document.getElementById("runButton");
+    const lineNumbers = document.getElementById("lineNumbers");
 
-console_output = document['consoleOutput']
+    function customPrint(message, isError = false) {
+        const output = isError ? `<span class="error">${message}</span>` : message;
+        consoleOutput.innerHTML += output + "\n";
+    }
 
-def custom_print(*args, sep=' ', end='\n', error=False):
-    output = sep.join(map(str, args)) + end
-    if error:
-        console_output.innerHTML += f'<span class="error">{output}</span>'
-    else:
-        console_output.text += output
+    function runJavaScriptCode() {
+        const code = codeEditor.value;
+        consoleOutput.textContent = "";
+        try {
+            const result = eval(code);
+            if (result !== undefined) {
+                customPrint(result);
+            }
+        } catch (e) {
+            customPrint("エラー：" + e.message, true);
+        }
+    }
 
-print = custom_print
+    function updateLineNumbers() {
+        const lines = codeEditor.value.split('\n');
+        lineNumbers.textContent = Array.from({ length: lines.length }, (_, i) => i + 1).join('\n');
+    }
 
-def run_python_code(event):
-    code = document['codeEditor'].value
-    console_output.text = ""
-    lines = code.split('\n')
+    function syncScroll() {
+        lineNumbers.scrollTop = codeEditor.scrollTop;
+    }
 
-    for line_number, line in enumerate(lines, start=1):
-        if line.strip() == "":
-            continue
-        try:
-            exec(line)
-        except Exception as e:
-            error_message = f"エラー：{str(e)} (行: {line_number})"
-            print(error_message, error=True)
+    function handleTab(event) {
+        if (event.key === "Tab") {
+            event.preventDefault();
+            const start = codeEditor.selectionStart;
+            const end = codeEditor.selectionEnd;
+            codeEditor.value = codeEditor.value.substring(0, start) + "\t" + codeEditor.value.substring(end);
+            codeEditor.selectionStart = codeEditor.selectionEnd = start + 1;
+            updateLineNumbers();
+        }
+    }
 
-run_button = document['runButton']
-run_button.bind('click', run_python_code)
+    // バインドイベント
+    runButton.addEventListener("click", runJavaScriptCode);
+    codeEditor.addEventListener("input", updateLineNumbers);
+    codeEditor.addEventListener("scroll", syncScroll);
+    codeEditor.addEventListener("keydown", handleTab);
 
-# 行番号を更新する関数
-def update_line_numbers(event):
-    editor = document['codeEditor']
-    lines = editor.value.split('\n')
-    line_count = len(lines)
-    line_numbers = '\n'.join(str(i + 1) for i in range(line_count))
-    document['lineNumbers'].text = line_numbers
-
-# エディタのスクロールに合わせて行番号もスクロール
-def sync_scroll(event):
-    line_numbers = document['lineNumbers']
-    code_editor = document['codeEditor']
-    line_numbers.scrollTop = code_editor.scrollTop
-
-# Tabキーでタブ文字を挿入
-def handle_tab(event):
-    if event.key == "Tab":
-        event.preventDefault()
-        editor = document['codeEditor']
-        start = editor.selectionStart
-        end = editor.selectionEnd
-        indent = "\t"
-        value = editor.value
-        editor.value = value[:start] + indent + value[end:]
-        editor.selectionStart = editor.selectionEnd = start + len(indent)
-        update_line_numbers(event)
-
-# 入力とスクロールおよびTabキー押下で行番号を更新
-code_editor = document['codeEditor']
-code_editor.bind('input', update_line_numbers)
-code_editor.bind('scroll', sync_scroll)
-code_editor.bind('keydown', handle_tab)
+    // 初期化
+    updateLineNumbers();
+});
