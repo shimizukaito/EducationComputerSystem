@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>プログラミング環境テスト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #codeEditor {
+            width: 80%;
+            height: 300px;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-family: monospace;
+            white-space: pre;
+            overflow: auto;
+        }
+        #consoleOutput {
+            width: 80%;
+            height: 200px;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #333;
+            background-color: #000;
+            color: #0f0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow: auto;
+        }
+        #runButton {
+            margin: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>プログラミング環境テスト</h1>
+    <textarea id="codeEditor" placeholder="ここにコードを入力"></textarea>
+    <button id="runButton">実行</button>
+    <pre id="consoleOutput">実行結果がここに表示されます</pre>
+
+    <script>
+        const runButton = document.getElementById('runButton');
+        const codeEditor = document.getElementById('codeEditor');
+        const consoleOutput = document.getElementById('consoleOutput');
+
+        runButton.addEventListener('click', () => {
+            try {
+                const result = eval(codeEditor.value);
+                consoleOutput.textContent = result !== undefined ? result : '完了';
+            } catch (error) {
+                consoleOutput.textContent = `エラー: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
