@@ -28,7 +28,6 @@ def run_python_code(event):
 run_button = document['runButton']
 run_button.bind('click', run_python_code)
 
-# 行番号を更新する関数
 def update_line_numbers(event):
     editor = document['codeEditor']
     lines = editor.value.split('\n')
@@ -36,13 +35,17 @@ def update_line_numbers(event):
     line_numbers = '\n'.join(str(i + 1) for i in range(line_count))
     document['lineNumbers'].text = line_numbers
 
-# エディタのスクロールに合わせて行番号もスクロール
 def sync_scroll(event):
     line_numbers = document['lineNumbers']
     code_editor = document['codeEditor']
     line_numbers.scrollTop = code_editor.scrollTop
 
-# Tabキーでタブ文字を挿入
+def adjust_height():
+    code_editor = document['codeEditor']
+    line_numbers = document['lineNumbers']
+    # エディタと行番号の高さを合わせる
+    line_numbers.style.height = f"{code_editor.scrollHeight}px"
+
 def handle_tab(event):
     if event.key == "Tab":
         event.preventDefault()
@@ -55,8 +58,10 @@ def handle_tab(event):
         editor.selectionStart = editor.selectionEnd = start + len(indent)
         update_line_numbers(event)
 
-# 入力とスクロールおよびTabキー押下で行番号を更新
 code_editor = document['codeEditor']
 code_editor.bind('input', update_line_numbers)
 code_editor.bind('scroll', sync_scroll)
 code_editor.bind('keydown', handle_tab)
+
+# 初期化時に高さを調整
+adjust_height()

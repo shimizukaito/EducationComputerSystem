@@ -22,6 +22,7 @@ header {
     display: flex;
     width: 80%;
     margin: 10px;
+    position: relative;
 }
 #lineNumbers {
     padding: 10px;
@@ -51,6 +52,7 @@ header {
     overflow: auto;
     outline: none;
     tab-size: 4;
+    box-sizing: border-box;
 }
 #consoleOutput {
     width: 80%;
