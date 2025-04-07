@@ -2,7 +2,8 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>プログラミング環境テスト</title>
+    <title>プログラミング環境テスト (Python対応)</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.9.5/brython.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,15 +14,31 @@
             height: 100vh;
             margin: 0;
         }
-        #codeEditor {
+        #editorContainer {
+            display: flex;
             width: 80%;
-            height: 300px;
             margin: 10px;
+        }
+        #lineNumbers {
             padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f4f4f4;
+            color: #555;
+            text-align: right;
+            font-family: monospace;
+            white-space: pre;
+            user-select: none;
+        }
+        #codeEditor {
+            flex: 1;
+            height: 300px;
+            padding: 10px;
+            margin: 0;
             border: 1px solid #ccc;
             font-family: monospace;
             white-space: pre;
             overflow: auto;
+            outline: none;
         }
         #consoleOutput {
             width: 80%;
@@ -40,27 +57,63 @@
             padding: 10px 20px;
             cursor: pointer;
         }
+        .error {
+            color: #f00;
+        }
     </style>
 </head>
-<body>
-    <h1>プログラミング環境テスト</h1>
-    <textarea id="codeEditor" placeholder="ここにコードを入力"></textarea>
+<body onload="brython()">
+    <h1>プログラミング環境テスト (Python対応)</h1>
+    <div id="editorContainer">
+        <div id="lineNumbers">1</div>
+        <textarea id="codeEditor" placeholder="ここにPythonコードを入力"></textarea>
+    </div>
     <button id="runButton">実行</button>
     <pre id="consoleOutput">実行結果がここに表示されます</pre>
 
-    <script>
-        const runButton = document.getElementById('runButton');
-        const codeEditor = document.getElementById('codeEditor');
-        const consoleOutput = document.getElementById('consoleOutput');
+    <script type="text/python">
+        from browser import document
 
-        runButton.addEventListener('click', () => {
-            try {
-                const result = eval(codeEditor.value);
-                consoleOutput.textContent = result !== undefined ? result : '完了';
-            } catch (error) {
-                consoleOutput.textContent = `エラー: ${error.message}`;
-            }
-        });
+        # コンソール出力用の要素を取得
+        console_output = document['consoleOutput']
+
+        # print関数をオーバーライドして出力を表示エリアにリダイレクト
+        def custom_print(*args, sep=' ', end='\n', error=False):
+            output = sep.join(map(str, args)) + end
+            if error:
+                console_output.innerHTML += f'<span class="error">{output}</span>'
+            else:
+                console_output.text += output
+
+        print = custom_print
+
+        def run_python_code(event):
+            code = document['codeEditor'].value
+            console_output.text = ""
+            lines = code.split('\n')
+            for line_number, line in enumerate(lines, start=1):
+                try:
+                    exec(line)
+                except Exception as e:
+                    error_message = f"エラーが発生しました：{str(e)} (行番号: {line_number})"
+                    print(error_message, error=True)
+                    break
+
+        run_button = document['runButton']
+        run_button.bind('click', run_python_code)
+
+        # 行番号を更新する関数
+        def update_line_numbers(event):
+            editor = document['codeEditor']
+            lines = editor.value.split('\n')
+            line_count = len(lines)
+            line_numbers = '\n'.join(str(i + 1) for i in range(line_count))
+            document['lineNumbers'].text = line_numbers
+
+        # 入力とスクロールイベントにバインド
+        code_editor = document['codeEditor']
+        code_editor.bind('input', update_line_numbers)
+        code_editor.bind('scroll', update_line_numbers)
     </script>
 </body>
 </html>
