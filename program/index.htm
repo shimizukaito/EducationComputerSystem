@@ -37,8 +37,13 @@
             color: #555;
             text-align: right;
             font-family: monospace;
+            font-size: 16px;
+            line-height: 1.2; /* 行間を調整して高さを統一 */
             white-space: pre;
             user-select: none;
+            overflow: hidden;
+            height: 300px;
+            box-sizing: border-box;
         }
         #codeEditor {
             flex: 1;
@@ -47,6 +52,8 @@
             margin: 0;
             border: 1px solid #ccc;
             font-family: monospace;
+            font-size: 16px;
+            line-height: 1.2; /* 行間を統一 */
             white-space: pre;
             overflow: auto;
             outline: none;
@@ -61,6 +68,8 @@
             background-color: #000;
             color: #0f0;
             font-family: monospace;
+            font-size: 16px;
+            line-height: 1.2;
             white-space: pre-wrap;
             overflow: auto;
         }
@@ -107,14 +116,12 @@
             lines = code.split('\n')
 
             for line_number, line in enumerate(lines, start=1):
-                # 空行はスキップ
                 if line.strip() == "":
                     continue
                 try:
                     exec(line)
                 except Exception as e:
                     try:
-                        # エラー発生時に正確な行番号を表示
                         error_line = e.__traceback__.tb_lineno
                     except AttributeError:
                         error_line = line_number
@@ -132,6 +139,12 @@
             line_numbers = '\n'.join(str(i + 1) for i in range(line_count))
             document['lineNumbers'].text = line_numbers
 
+        # エディタのスクロールに合わせて行番号もスクロール
+        def sync_scroll(event):
+            line_numbers = document['lineNumbers']
+            code_editor = document['codeEditor']
+            line_numbers.scrollTop = code_editor.scrollTop
+
         # Tabキーでタブ文字を挿入
         def handle_tab(event):
             if event.key == "Tab":
@@ -148,7 +161,7 @@
         # 入力とスクロールおよびTabキー押下で行番号を更新
         code_editor = document['codeEditor']
         code_editor.bind('input', update_line_numbers)
-        code_editor.bind('scroll', update_line_numbers)
+        code_editor.bind('scroll', sync_scroll)
         code_editor.bind('keydown', handle_tab)
     </script>
 </body>
