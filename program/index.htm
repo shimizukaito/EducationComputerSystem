@@ -2,24 +2,26 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>プログラミング環境テスト (JavaScript対応)</title>
+    <title>プログラミング環境テスト (Python対応)</title>
+    <!-- Brythonを読み込み -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.9.5/brython.min.js"></script>
     <!-- 外部CSSを読み込み -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onload="brython()">
     <header>
-        <h1>プログラミング環境テスト (JavaScript対応)</h1>
+        <h1>プログラミング環境テスト (Python対応)</h1>
         <div id="settingsIcon">⚙️</div>
     </header>
 
     <div id="editorContainer">
         <div id="lineNumbers">1</div>
-        <textarea id="codeEditor" placeholder="ここにJavaScriptコードを入力"></textarea>
+        <textarea id="codeEditor" placeholder="ここにPythonコードを入力"></textarea>
     </div>
     <button id="runButton">実行</button>
     <pre id="consoleOutput">実行結果がここに表示されます</pre>
 
-    <!-- JavaScript用の外部スクリプトを読み込み -->
-    <script src="script.js"></script>
+    <!-- Brython用の外部Pythonスクリプトを読み込み -->
+    <script type="text/python" src="script.js"></script>
 </body>
 </html>
