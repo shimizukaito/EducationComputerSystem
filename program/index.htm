@@ -1,28 +1,40 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>プログラミング環境テスト (Python対応)</title>
-    <!-- Brythonを読み込み -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.9.5/brython.min.js"></script>
-    <!-- 外部CSS -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>プログラミング環境テスト (Python対応)</title>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.9.5/brython.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body onload="brython()">
-    <header>
+  <div id="mainContainer">
+    <aside id="programList">
+      <h3>保存済みプログラム</h3>
+      <button id="deleteButton">削除</button>
+      <ul id="savedFiles"></ul>
+    </aside>
+
+    <div id="editorMain">
+      <header>
         <h1>プログラミング環境テスト (Python対応)</h1>
         <div id="settingsIcon">⚙️</div>
-    </header>
+      </header>
 
-    <div id="editorContainer">
+      <div id="editorContainer">
         <div id="lineNumbers">1</div>
         <textarea id="codeEditor" placeholder="ここにPythonコードを入力"></textarea>
+      </div>
+
+      <div id="buttonRow">
+        <input type="text" id="filenameInput" placeholder="ファイル名" />
+        <button id="runButton">実行</button>
+        <button id="saveButton">保存</button>
+      </div>
+
+      <pre id="consoleOutput">実行結果がここに表示されます</pre>
     </div>
+  </div>
 
-    <button id="runButton">実行</button>
-    <pre id="consoleOutput">実行結果がここに表示されます</pre>
-
-    <!-- 外部Pythonスクリプト（Brython） -->
-    <script type="text/python" src="script.py"></script>
+  <script type="text/python" src="script.py"></script>
 </body>
 </html>
