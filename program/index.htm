@@ -10,28 +10,51 @@
   <div id="mainContainer">
     <aside id="programList">
       <h3>保存済みプログラム</h3>
-      <button id="deleteButton">削除</button>
+      <div class="sideButtons">
+        <button id="newButton">新規作成</button>
+        <button id="deleteButton">削除</button>
+      </div>
       <ul id="savedFiles"></ul>
     </aside>
 
     <div id="editorMain">
       <header>
         <h1>プログラミング環境テスト (Python対応)</h1>
-        <div id="settingsIcon">⚙️</div>
       </header>
+
+      <div id="buttonRow">
+        <button id="runButton">実行</button>
+        <button id="saveButton">保存</button>
+        <div id="settingsIcon">⚙️</div>
+      </div>
 
       <div id="editorContainer">
         <div id="lineNumbers">1</div>
         <textarea id="codeEditor" placeholder="ここにPythonコードを入力"></textarea>
       </div>
 
-      <div id="buttonRow">
-        <button id="runButton">実行</button>
-        <button id="saveButton">保存</button>
-      </div>
-      
-
       <pre id="consoleOutput">実行結果がここに表示されます</pre>
+    </div>
+  </div>
+
+  <!-- オーバーレイ（背景を暗く） -->
+  <div id="overlay" style="display: none;"></div>
+
+  <!-- 設定ポップアップ -->
+  <div id="settingsPopup" style="display: none;">
+    <h3>設定</h3>
+    <div class="settingRow">
+      <label for="fontSizeSelect">文字サイズ:</label>
+      <select id="fontSizeSelect">
+        <option value="12px">12px</option>
+        <option value="14px">14px</option>
+        <option value="16px" selected>16px</option>
+        <option value="18px">18px</option>
+        <option value="20px">20px</option>
+      </select>
+    </div>
+    <div style="text-align: right; margin-top: 10px;">
+      <button id="closeSettingsButton">閉じる</button>
     </div>
   </div>
 
