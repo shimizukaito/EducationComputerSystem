@@ -18,13 +18,20 @@ def run_python_code(event):
     global current_filename
     code = editor.value
     console_output.text = ""
+
     if current_filename and window.localStorage.getItem(STORAGE_PREFIX + current_filename) is not None:
         window.localStorage.setItem(STORAGE_PREFIX + current_filename, code)
         print(f"'{current_filename}' を上書き保存しました")
+
     try:
         exec(code)
+    except SyntaxError as e:
+        print(f"エラー：{e.msg} (行: {e.lineno})", error=True)
     except Exception as e:
-        print(f"エラー：{str(e)}", error=True)
+        tb = getattr(e, '__traceback__', None)
+        lineno = tb.tb_lineno if tb else '?'
+        print(f"エラー：{str(e)} (行: {lineno})", error=True)
+
 
 def save_code_to_storage(event=None):
     global current_filename
@@ -82,6 +89,31 @@ def create_new_file(event=None):
     document['lineNumbers'].text = "1"
     print(f"新規ファイル '{name}' を作成しました")
     refresh_file_list()
+
+def refresh_file_list():
+    file_list.clear()
+    folders = []
+    files = []
+
+    for i in range(window.localStorage.length):
+        key = window.localStorage.key(i)
+        if key.startswith("pyprogdir:"):
+            folders.append(key[len("pyprogdir:"):])
+        elif key.startswith(STORAGE_PREFIX):
+            files.append(key[len(STORAGE_PREFIX):])
+
+    for folder in sorted(folders):
+        li = html.LI(f"📁 {folder}")
+        li.style.fontWeight = "bold"
+        file_list <= li
+
+    for name in sorted(files):
+        li = html.LI(name)
+        li.attrs['data-name'] = name
+        li.bind('click', lambda ev, name=name: load_code_from_storage(name))
+        li.bind('dblclick', rename_file_prompt)
+        file_list <= li
+
 
 def refresh_file_list():
     file_list.clear()
@@ -166,6 +198,8 @@ document['settingsIcon'].bind('click', toggle_settings_popup)
 document['closeSettingsButton'].bind('click', close_settings_popup)
 document['overlay'].bind('click', close_settings_popup)
 document['fontSizeSelect'].bind('change', change_font_size)
+
+
 editor.bind('input', update_line_numbers)
 editor.bind('scroll', sync_scroll)
 editor.bind('keydown', handle_tab)
