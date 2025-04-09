@@ -110,12 +110,6 @@ body {
     width: 80%;
   }
   
-  #filenameInput {
-    flex: 1;
-    padding: 8px;
-    font-size: 14px;
-  }
-  
   #runButton,
   #saveButton {
     padding: 10px 20px;
