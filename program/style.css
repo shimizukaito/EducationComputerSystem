@@ -3,30 +3,21 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
     margin: 0;
 }
 header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     width: 80%;
     margin: 10px;
-}
-#settingsIcon {
-    cursor: pointer;
-    font-size: 24px;
 }
 #editorContainer {
     display: flex;
     width: 80%;
     margin: 10px;
-    position: relative;
 }
 #lineNumbers {
     padding: 10px;
-    border: 1px solid #ccc;
     background-color: #f4f4f4;
     color: #555;
     text-align: right;
@@ -37,13 +28,13 @@ header {
     user-select: none;
     overflow: hidden;
     height: 300px;
+    border: 1px solid #ccc;
     box-sizing: border-box;
 }
 #codeEditor {
     flex: 1;
     height: 300px;
     padding: 10px;
-    margin: 0;
     border: 1px solid #ccc;
     font-family: monospace;
     font-size: 16px;
@@ -52,14 +43,12 @@ header {
     overflow: auto;
     outline: none;
     tab-size: 4;
-    box-sizing: border-box;
 }
 #consoleOutput {
     width: 80%;
     height: 200px;
     margin: 10px;
     padding: 10px;
-    border: 1px solid #333;
     background-color: #000;
     color: #0f0;
     font-family: monospace;
@@ -67,6 +56,7 @@ header {
     line-height: 1.2;
     white-space: pre-wrap;
     overflow: auto;
+    border: 1px solid #333;
 }
 #runButton {
     margin: 10px;

@@ -5,7 +5,7 @@
     <title>プログラミング環境テスト (Python対応)</title>
     <!-- Brythonを読み込み -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.9.5/brython.min.js"></script>
-    <!-- 外部CSSを読み込み -->
+    <!-- 外部CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body onload="brython()">
@@ -18,10 +18,11 @@
         <div id="lineNumbers">1</div>
         <textarea id="codeEditor" placeholder="ここにPythonコードを入力"></textarea>
     </div>
+
     <button id="runButton">実行</button>
     <pre id="consoleOutput">実行結果がここに表示されます</pre>
 
-    <!-- Brython用の外部Pythonスクリプトを読み込み -->
-    <script type="text/python" src="script.js"></script>
+    <!-- 外部Pythonスクリプト（Brython） -->
+    <script type="text/python" src="script.py"></script>
 </body>
 </html>
